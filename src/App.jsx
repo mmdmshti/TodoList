@@ -1,20 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
+import Todos from './components/Todos';
 import Home from './Home'
-import './App.css'
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  return(
+    <div className ="bg-gray-100">
+      <Todos />
+      <Todos />
 
-  return (
-    <div className="text-yellow-700 font-bold">
-        <Home />
-      HELLO WORLD
-    </div>
 
+</div>
     
+  
+
+
+
   )
+  
 }
 
-export default App
+export default App;
+
+
