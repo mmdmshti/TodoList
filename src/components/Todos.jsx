@@ -64,13 +64,12 @@ export default function Todos(){
     }
 
     const EditorHandler = (id) => {
-        console.log("Edit");
-        let edetingItem = items.filter((item) => {
-            return id == item.id
-        })
-        setInputValue(edetingItem)
-        deleteitemsHandler(id)
-
+        const edetingItem = items.find((item) => id === item.id);
+        if (edetingItem) {
+            setInputValue(edetingItem.title);
+            deleteitemsHandler(id);
+        }
+        
     }
     
     return(
