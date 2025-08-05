@@ -1,30 +1,39 @@
 import { useState } from "react";
 import Task from "./Task";
 import TaskBox from "./TaskBox";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Todos(){
     var [items , setItem] =useState([
         {
             title : "go to school at 9:00 AM",
-            statu : true
+            statu : true,
+            id : uuidv4()
+            
+        
+            
         }
         ,
         {
             title : "go to the gym at 7:00 PM",
-            statu : false
+            statu : false,
+            id : uuidv4()
         }
     
     ])
 
+      
+
     var [inputValue , setInputValue] = useState("")
     
     const clickHandler = (event) => {
-        if(event.key == 'Enter'){
+        if(event.key == 'Enter' && inputValue != ""){
             setItem([
                 ...items,
                 {
                     title : inputValue,
-                    statu : true
+                    statu : false,
+                    id : uuidv4()
                 }
             ])
             setInputValue('')
@@ -32,6 +41,38 @@ export default function Todos(){
 
     }
 
+    const deleteitemsHandler = (id) => {
+        let newItems = items.filter((item) => {
+            return id != item.id
+
+        })
+
+        setItem(newItems)
+    }
+
+    const togglestatuhandler = (id) => {
+
+        let newitems = items.map( (item) => {
+            if(id == item.id){
+                item.statu = ! item.statu
+            }
+            
+            return item
+        })
+
+        setItem(newitems)
+    }
+
+    const EditorHandler = (id) => {
+        console.log("Edit");
+        let edetingItem = items.filter((item) => {
+            return id == item.id
+        })
+        setInputValue(edetingItem)
+        deleteitemsHandler(id)
+
+    }
+    
     return(
         <div>
                 <div className="flex items-center justify-center h-screen">
@@ -45,7 +86,7 @@ export default function Todos(){
             </div>
             <TaskBox>
               {items.map((item , index) =>
-              (<Task title = {item?.title} statu = {item.statu} key = {index} />))}
+              (<Task title = {item?.title} statu = {item.statu} key = {index} id = {item.id} deleteTask = {deleteitemsHandler} togglestatu = {togglestatuhandler} Edit = {EditorHandler} />))}
             </TaskBox>
             
         </div>
