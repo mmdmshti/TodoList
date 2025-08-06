@@ -22,11 +22,15 @@ export default function Todos(){
     
     ])
 
-      
+    var [state , setState] = useState(false)
 
     var [inputValue , setInputValue] = useState("")
+
+
+
     
     const clickHandler = (event) => {
+        
         if(event.key == 'Enter' && inputValue != ""){
             setItem([
                 ...items,
@@ -62,14 +66,21 @@ export default function Todos(){
 
         setItem(newitems)
     }
+    const EditorHandler = (id , newvalue) => {
+        let newitems = items.map( (item) => {
+            if(id == item.id){
+                item.title = newvalue
+            }
+            
+            return item
+        })
 
-    const EditorHandler = (id) => {
-        const edetingItem = items.find((item) => id === item.id);
-        if (edetingItem) {
-            setInputValue(edetingItem.title);
-            deleteitemsHandler(id);
-        }
-        
+        setItem(newitems)
+
+    }
+
+    const ChangeState = (bool) => {
+        setState(bool)
     }
     
     return(
@@ -77,7 +88,7 @@ export default function Todos(){
                 <div className="flex items-center justify-center h-screen">
         <div className="w-full px-4 py-8 mx-auto shadow lg:w-1/3  bg-white">
             <div className="flex items-center mb-6">
-                <h1 className="mr-6 text-4xl font-bold text-purple-600"> TO DO APP</h1>
+                <h1 className="mr-6 text-4xl font-bold text-purple-600"> {state ? "EDITING..."  : "TO DO APP"}</h1>
             </div>
             <div className="relative">
                 <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyDown={clickHandler} placeholder="What needs to be done today?"
@@ -85,7 +96,7 @@ export default function Todos(){
             </div>
             <TaskBox>
               {items.map((item , index) =>
-              (<Task title = {item?.title} statu = {item.statu} key = {index} id = {item.id} deleteTask = {deleteitemsHandler} togglestatu = {togglestatuhandler} Edit = {EditorHandler} />))}
+              (<Task title = {item?.title} statu = {item.statu} key = {index} id = {item.id} deleteTask = {deleteitemsHandler} togglestatu = {togglestatuhandler} Edit = {EditorHandler} State = {ChangeState}/>))}
             </TaskBox>
             
         </div>
