@@ -1,26 +1,28 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Task from "./Task";
 import TaskBox from "./TaskBox";
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
+import { addTodo } from "../api";
+import { deleteTodo } from "../api";
+import { updateTodo } from "../api";
+import { getTodos} from "../api";
+
+
+
+  
+
+
+
 
 export default function Todos(){
-    var [items , setItem] =useState([
-        {
-            title : "go to school at 9:00 AM",
-            statu : true,
-            id : uuidv4()
-            
-        
-            
-        }
-        ,
-        {
-            title : "go to the gym at 7:00 PM",
-            statu : false,
-            id : uuidv4()
-        }
-    
-    ])
+    useEffect(() => {
+        getTodos()
+          .then(res => setItem(res.data))
+          .catch(console.error);
+      }, []);
+
+      
+    var [items , setItem] =useState([])
 
     var [state , setState] = useState(false)
 
@@ -29,55 +31,95 @@ export default function Todos(){
 
 
     
-    const clickHandler = (event) => {
+    // const clickHandler = (event) => {
         
-        if(event.key == 'Enter' && inputValue != ""){
-            setItem([
-                ...items,
-                {
-                    title : inputValue,
-                    statu : false,
-                    id : uuidv4()
-                }
-            ])
-            setInputValue('')
+    //     if(event.key == 'Enter' && inputValue != ""){
+    //         setItem([
+    //             ...items,
+    //             {
+    //                 title : inputValue,
+    //                 statu : false,
+    //                 id : uuidv4()
+    //             }
+    //         ])
+    //         setInputValue('')
+    //     }
+
+    // }
+    const clickHandler = (event) => {
+        if (event.key === "Enter" && inputValue.trim() !== "") {
+            const newTodo = { title: inputValue, statu: false };
+            addTodo(newTodo)
+              .then(res => {
+                  setItem([...items, res.data]);
+                  setInputValue("");
+              })
+              .catch(err => console.error(err));
         }
+    };
 
-    }
+    // const deleteitemsHandler = (id) => {
+    //     let newItems = items.filter((item) => {
+    //         return id != item.id
 
+    //     })
+
+    //     setItem(newItems)
+    // }
     const deleteitemsHandler = (id) => {
-        let newItems = items.filter((item) => {
-            return id != item.id
+        deleteTodo(id)
+          .then(() => {
+            // وقتی حذف توی بک‌اند موفق بود، حذف رو تو استیت انجام بده
+            setItem(items.filter(item => item.id !== id));
+          })
+          .catch(err => {
+            console.error("Failed to delete:", err);
+          });
+      };
 
-        })
+      const togglestatuhandler = (id) => {
+        const todo = items.find(i => i.id === id);
+        updateTodo(id, { statu: !todo.statu })
+          .then(res => {
+            setItem(items.map(item =>
+              item.id === id ? res.data : item
+            ));
+          })
+          .catch(console.error);
+      };
+    // const togglestatuhandler = (id) => {
 
-        setItem(newItems)
-    }
-
-    const togglestatuhandler = (id) => {
-
-        let newitems = items.map( (item) => {
-            if(id == item.id){
-                item.statu = ! item.statu
-            }
+    //     let newitems = items.map( (item) => {
+    //         if(id == item.id){
+    //             item.statu = ! item.statu
+    //         }
             
-            return item
-        })
+    //         return item
+    //     })
 
-        setItem(newitems)
-    }
-    const EditorHandler = (id , newvalue) => {
-        let newitems = items.map( (item) => {
-            if(id == item.id){
-                item.title = newvalue
-            }
+    //     setItem(newitems)
+    // }
+    // const EditorHandler = (id , newvalue) => {
+    //     let newitems = items.map( (item) => {
+    //         if(id == item.id){
+    //             item.title = newvalue
+    //         }
             
-            return item
-        })
+    //         return item
+    //     })
 
-        setItem(newitems)
+    //     setItem(newitems)
 
-    }
+    // }
+    const EditorHandler = (id, newTitle) => {
+        // Return promise so Task can await
+        return updateTodo(id, { title: newTitle })
+          .then(res => {
+            setItem(items.map(item =>
+              item.id === id ? { ...item, title: res.data.title } : item
+            ));
+          });
+      };
 
     const ChangeState = (bool) => {
         setState(bool)
