@@ -1,0 +1,16 @@
+{
+  "name": "todolistbackend",
+  "version": "1.0.0",
+  "description": "A simple backend for todolist project",
+  "license": "ISC",
+  "author": "MMDMSHTI",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "uuid": "^11.1.0"
+  }
+}
